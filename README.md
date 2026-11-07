@@ -26,6 +26,9 @@ Exploratory Data Analysis and baseline modeling.
 - 2026-11-07: Found that MABe22_keypoints and MABe22_movies account for approximately 90.2% of training videos.
 - 2026-11-07: Examined video durations and frame rates, identifying 404 recordings longer than 600 seconds and 43 recordings above 60 FPS.
 - 2026-11-07: Added EDA visualizations and interpretations to the assignment notebook.
+- 2026-11-08: Inspected tracking coordinates and behavior annotation intervals.
+- 2026-11-08: Analyzed 83,620 annotated behavior events across 37 behavior categories.
+- 2026-11-08: Identified substantial class imbalance, with sniff accounting for approximately 45.2% of annotated events.
 
 ## Kaggle Submission History
 No submission yet.
