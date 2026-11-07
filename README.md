@@ -18,6 +18,9 @@ Exploratory Data Analysis and baseline modeling.
 
 ## Progress Log
 - 2026-10-11: Created the GitHub repository and initialized the project.
+- 2026-11-07: Set up Google Colab and downloaded the MABe dataset.
+- 2026-11-07: Inspected 8,789 training records and 38 metadata columns.
+- 2026-11-07: Identified 8,789 training tracking files and 847 annotation files.
 
 ## Kaggle Submission History
 No submission yet.
