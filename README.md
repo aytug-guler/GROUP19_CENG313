@@ -37,6 +37,10 @@ Exploratory Data Analysis and baseline modeling.
 - 2026-11-08: Implemented frame-level labels, tracking-coordinate cleaning, and seven motion-related features.
 - 2026-11-08: Trained Dummy and Random Forest baselines on 242,132 valid training frames.
 - 2026-11-08: Random Forest achieved 0.4793 validation F1-score and 0.3976 average precision.
+- 2026-11-08: Compared Dummy and Random Forest baselines using validation metrics and precision-recall analysis.
+- 2026-11-08: Optimized the Random Forest decision threshold to 0.5896, achieving a validation F1-score of 0.4883.
+- 2026-11-08: Analyzed feature importance and found that spatial distance features accounted for approximately 92.75% of impurity-based importance.
+- 2026-11-08: Evaluated the fixed Random Forest on 9 independent test videos (54,192 valid frames), achieving F1-score 0.4966 and average precision 0.4403.
 
 ## Kaggle Submission History
 No submission yet.
