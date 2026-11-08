@@ -29,6 +29,10 @@ Exploratory Data Analysis and baseline modeling.
 - 2026-11-08: Inspected tracking coordinates and behavior annotation intervals.
 - 2026-11-08: Analyzed 83,620 annotated behavior events across 37 behavior categories.
 - 2026-11-08: Identified substantial class imbalance, with sniff accounting for approximately 45.2% of annotated events.
+- 2026-11-08: Explored mouse tracking data and visualized movement trajectories.
+- 2026-11-08: Calculated inter-mouse distances and compared tracking measurements with a labeled chase event.
+- 2026-11-08: Analyzed annotation coverage across 21 data sources, identifying two large sources without training annotation files.
+- 2026-11-08: Completed the initial EDA stage of Assignment 1.
 
 ## Kaggle Submission History
 No submission yet.
