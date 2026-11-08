@@ -1,0 +1,32 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local datasets
+data/
+*.parquet
+*.zip
+
+# Kaggle credentials and secrets
+kaggle.json
+.env
+.env.*
+*.key
+
+# Local notebook checkpoints
+.ipynb_checkpoints/
+
+# Model artifacts
+*.pkl
+*.joblib
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
