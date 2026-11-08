@@ -33,6 +33,10 @@ Exploratory Data Analysis and baseline modeling.
 - 2026-11-08: Calculated inter-mouse distances and compared tracking measurements with a labeled chase event.
 - 2026-11-08: Analyzed annotation coverage across 21 data sources, identifying two large sources without training annotation files.
 - 2026-11-08: Completed the initial EDA stage of Assignment 1.
+- 2026-11-08: Selected 60 CalMS21_task1 videos for directed sniffbody detection and created a 42/9/9 video-level split.
+- 2026-11-08: Implemented frame-level labels, tracking-coordinate cleaning, and seven motion-related features.
+- 2026-11-08: Trained Dummy and Random Forest baselines on 242,132 valid training frames.
+- 2026-11-08: Random Forest achieved 0.4793 validation F1-score and 0.3976 average precision.
 
 ## Kaggle Submission History
 No submission yet.
