@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
+from .utils import mouse_name
+
 
 FEATURE_COLUMNS = [
     "nose_to_neck_cm",
@@ -233,3 +235,75 @@ def build_split(
     )
 
     return dataset
+
+
+# Shared features for the competition models. The historical features above
+# remain available for reproducing the original sniffbody experiment.
+TRACK_COLUMNS = ["video_frame", "mouse_id", "bodypart", "x", "y"]
+PAIR_FEATURES = ["agent_speed", "target_speed", "distance", "closing_speed", "self_target"]
+
+
+def video_features(tracking, scale, fps):
+    """Pool available keypoints into per-mouse centers and estimate speed."""
+    scale = scale if pd.notna(scale) and np.isfinite(scale) and scale > 0 else 1.0
+    fps = fps if pd.notna(fps) and np.isfinite(fps) and fps > 0 else 30.0
+    points = tracking.copy()
+    names = {value: mouse_name(value) for value in points["mouse_id"].dropna().unique()}
+    points["mouse_id"] = points["mouse_id"].map(names)
+    frames = pd.to_numeric(points["video_frame"], errors="coerce")
+    valid = np.isfinite(frames) & frames.ge(0) & frames.mod(1).eq(0)
+    points = points.loc[valid].copy()
+    points["video_frame"] = frames.loc[valid].astype("int64")
+    xy = points[["x", "y"]].apply(pd.to_numeric, errors="coerce")
+    points[["x", "y"]] = xy.where(np.isfinite(xy).all(axis=1) & xy.ne(0).any(axis=1))
+    points = points.dropna(subset=["mouse_id", "x", "y"]).drop_duplicates(
+        ["video_frame", "mouse_id", "bodypart"]
+    )
+    centers = points.groupby(["mouse_id", "video_frame"])[["x", "y"]].mean() / scale
+    mice = {}
+    for mouse, center in centers.groupby(level="mouse_id"):
+        center = center.droplevel("mouse_id").sort_index()
+        delta = center.index.to_series().diff()
+        speed = np.hypot(center["x"].diff(), center["y"].diff()) * fps / delta
+        mice[mouse] = center.assign(speed=speed.fillna(0.0))
+    return mice
+
+
+def pair_features(mice, agent, target, fps):
+    """Represent a directed pair or a self action on jointly observed frames."""
+    if target == "self":
+        target = agent
+    first, second = mice[agent].align(mice[target], join="inner", axis=0)
+    distance = np.hypot(first["x"] - second["x"], first["y"] - second["y"])
+    fps = fps if pd.notna(fps) and np.isfinite(fps) and fps > 0 else 30.0
+    closing = -distance.diff() * fps / distance.index.to_series().diff()
+    return pd.DataFrame({
+        "agent_speed": first["speed"], "target_speed": second["speed"],
+        "distance": distance, "closing_speed": closing.fillna(0.0),
+        "self_target": float(agent == target),
+    }, index=first.index).astype("float32")
+
+
+def annotation_events(path):
+    """Group half-open intervals by normalized agent, target and action."""
+    groups = {}
+    for agent, target, action, start, stop in pd.read_parquet(path)[
+        ["agent_id", "target_id", "action", "start_frame", "stop_frame"]
+    ].itertuples(index=False, name=None):
+        agent = mouse_name(agent)
+        target = "self" if str(target) == "self" else mouse_name(target)
+        if agent and target and pd.notna(action) and pd.notna(start) and pd.notna(stop) and 0 <= start < stop:
+            groups.setdefault((agent, "self" if target == agent else target, action), []).append(
+                (int(start), int(stop))
+            )
+    return groups
+
+
+def interval_labels(frames, intervals):
+    """Label observed frames without expanding unobserved video ranges."""
+    changes = np.zeros(len(frames) + 1, dtype=np.int32)
+    for start, stop in intervals:
+        left, right = np.searchsorted(frames, [start, stop])
+        changes[left] += 1
+        changes[right] -= 1
+    return changes[:-1].cumsum() > 0

@@ -62,38 +62,60 @@ The model detects a substantial proportion of positive sniffbody frames, althoug
 
 **Note:** These results represent a focused binary classification baseline, not an official Kaggle competition score.
 
-### Repository Structure
+### Repository structure
 
-```text
-GROUP19_CENG313/
-├── README.md
-├── assignment1_eda_baseline.ipynb
-├── requirements.txt
-├── .gitignore
-└── src/
-    ├── data.py
-    └── models.py
-```
+    GROUP19_CENG313/
+    ├── README.md
+    ├── requirements.txt
+    ├── .gitignore
+    ├── assignment1_eda_baseline.ipynb
+    ├── assignment2_solution.ipynb
+    ├── src/
+    │   ├── __init__.py
+    │   ├── data.py
+    │   ├── models.py
+    │   └── utils.py
+    ├── data/             local competition input
+    └── submissions/      official score evidence
 
-- `assignment1_eda_baseline.ipynb`: Exploratory analysis, baseline experiments, visualizations, and evaluation.
-- `src/data.py`: Reusable feature extraction, annotation processing, and dataset construction.
-- `src/models.py`: Baseline training, evaluation, threshold optimization, and feature importance functions.
-- `requirements.txt`: Required Python libraries.
-- `.gitignore`: Excludes local datasets, credentials, and unnecessary generated files.
+### Run Assignment 1 locally
 
-### How to Run
+1. Accept the competition rules and download the data from the [competition Data tab](https://www.kaggle.com/competitions/MABe-mouse-behavior-detection/data).
+2. Extract it to data/ so train.csv, test.csv, train_tracking/ and train_annotation/ are immediately under data/. Alternatively, set MABE_DATA_DIR to the extracted directory before launching Jupyter.
+3. In a Python 3.12 environment, run the following from the project folder.
 
-1. Open `assignment1_eda_baseline.ipynb` in Google Colab.
-2. Ensure that the Kaggle account has accepted the MABe Challenge competition rules.
-3. Create a Colab secret named `KAGGLE_API_TOKEN` containing a valid Kaggle API token, and enable notebook access.
-4. Run the notebook cells in order. The notebook clones the public GitHub repository and imports reusable functions from `src/`.
-5. The notebook downloads the competition dataset, performs exploratory analysis, constructs the video-level splits, trains baseline classifiers, and evaluates the Random Forest model.
+       python -m pip install -r requirements.txt
+       python -m jupyter lab
 
-A Google Colab runtime with sufficient memory and storage is required to process the dataset.
+4. Open assignment1_eda_baseline.ipynb and select Restart Kernel and Run All Cells. The checked-in notebook includes the original saved EDA, plots and model results. New summary cells populate on execution.
+
+### Run in Colab
+
+1. Accept the [MABe competition rules](https://www.kaggle.com/competitions/MABe-mouse-behavior-detection/rules) with the Kaggle account that owns your API token.
+2. Upload the local `assignment1_eda_baseline.ipynb` to a fresh Colab CPU runtime. Under Secrets (the key icon), add `KAGGLE_API_TOKEN` and enable notebook access.
+3. Select **Runtime → Run all**. The notebook installs the required libraries, downloads and locates the official competition data using KaggleHub, and loads the embedded `src/` snapshot. Allow space for the download and extraction.
+4. The EDA, plots, 42/9/9 split and sniffbody evaluation run automatically.
+
+### Run on Kaggle
+
+1. Import the same local `assignment1_eda_baseline.ipynb` as a Kaggle notebook.
+2. Under **Add Input**, attach the official [MABe competition data](https://www.kaggle.com/competitions/MABe-mouse-behavior-detection/data).
+3. Set **Accelerator** to **None** (CPU) and **Internet** to **Off**.
+4. Use **Save Version → Save & Run All** and check that the run finishes. Inspect the EDA and evaluation in the saved notebook, and find `submission.csv` under **Output**. It is written to `/kaggle/working/submission.csv`.
+
+### Competition model extension
+
+The extension reuses the Assignment 1 Random Forest settings and the distance and motion feature ideas. Averaging available keypoints gives a per-mouse center across different laboratory tracking configurations. One binary forest per action trains on real annotation intervals and sampled frames within the labeling scope listed in `train.csv`. Sampling is capped per video, pair, action and class to limit CPU and memory use.
+
+For each video, `test.csv` defines eligible mouse IDs and actions through `behaviors_labeled`. The pipeline intersects that scope with tracking coverage and merges consecutive predicted frames into half-open intervals. It validates the header against the provided sample and checks allowed triples, tracking coverage, interval validity and row IDs before reporting the CSV. The public input exposes a preview test set. The hidden set is provided by Kaggle during official scoring.
+
+Set `RUN_EXTENSION_VALIDATION = True` in the setup cell to run the optional video-level holdout and per-action frame F1 evaluation. This adds a separate training pass. Set `RUN_SUBMISSION = True` in Colab or locally to exercise the CSV path against the public test input. The historical sniffbody test F1 of 0.4966 belongs to the original experiment. The extended model has no recorded Kaggle score.
+
+The notebook embeds exact copies of `src/__init__.py`, `src/data.py`, `src/models.py` and `src/utils.py`. Keep the setup cell's `MODULE_SOURCES` snapshot synchronized when updating these files.
 
 ### Limitations and Future Work
 
-The baseline considers one directed social behavior and does not cover the full multi-behavior Kaggle prediction task. The frame-level samples are also temporally correlated within each video.
+The historical baseline considers one directed social behavior and does not cover the full multi-behavior Kaggle prediction task. The frame-level samples are also temporally correlated within each video.
 
 Assignment 2 will build upon this repository with improved modeling approaches, additional experiments, and comparisons against the Assignment 1 baseline.
 
@@ -125,5 +147,24 @@ Assignment 2 will build upon this repository with improved modeling approaches, 
 - 2026-11-08: Refactored reusable data processing and baseline model functions into src/data.py and src/models.py.
 - 2026-11-08: Integrated GitHub modules into Google Colab and successfully reproduced the original training, validation, and independent test results.
 
-## Kaggle Submission History
-No submission yet.
+- 2026-11-13: Added offline Kaggle execution and automatic Colab setup to the original Assignment 1 notebook.
+
+- 2026-11-13: Replaced the annotation-prior submission with supervised action models shared with Assignment 1 and added held-out behavior evaluation.
+
+## Kaggle submission status
+
+The Assignment 1 notebook was successfully submitted to the **MABe Challenge – Social Action Recognition in Mice** as a late submission.
+
+| Submission             |Public Score |Private Score|        Status              |
+
+| Group19(2) – Version 2 | **0.19871** | **0.18551** | Succeeded (after deadline) |
+
+The submitted notebook performs exploratory data analysis, trains baseline models, and generates `submission.csv` using the competition's required format.
+
+These scores are official Kaggle competition results and are distinct from the local binary `sniffbody` Random Forest test F1-score of approximately 0.4966.
+
+Evidence: `submissions/kaggle_score_assignment1.png`.
+
+Course requirements are documented in the [official CENG313 project guide](https://github.com/ceng313-2026/.github/blob/main/profile/README.md).
+
+The Assignment 1 notebook embeds src/utils.py, src/data.py and src/models.py in that order, omitting relative imports because the cells share one namespace. Keep the embedded code in sync when changing the modules.
