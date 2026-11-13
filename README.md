@@ -109,7 +109,7 @@ The extension reuses the Assignment 1 Random Forest settings and the distance an
 
 For each video, `test.csv` defines eligible mouse IDs and actions through `behaviors_labeled`. The pipeline intersects that scope with tracking coverage and merges consecutive predicted frames into half-open intervals. It validates the header against the provided sample and checks allowed triples, tracking coverage, interval validity and row IDs before reporting the CSV. The public input exposes a preview test set. The hidden set is provided by Kaggle during official scoring.
 
-Set `RUN_EXTENSION_VALIDATION = True` in the setup cell to run the optional video-level holdout and per-action frame F1 evaluation. This adds a separate training pass. Set `RUN_SUBMISSION = True` in Colab or locally to exercise the CSV path against the public test input. The historical sniffbody test F1 of 0.4966 belongs to the original experiment. The extended model has no recorded Kaggle score.
+Set `RUN_EXTENSION_VALIDATION = True` in the setup cell to run the optional video-level holdout and per-action frame F1 evaluation. This adds a separate training pass. Set `RUN_SUBMISSION = True` in Colab or locally to exercise the CSV path against the public test input. The historical sniffbody test F1 of 0.4966 belongs to the original experiment. The extended model achieved an official Kaggle Public Score of **0.19871** and Private Score of **0.18551** through a successful late submission.
 
 The notebook embeds exact copies of `src/__init__.py`, `src/data.py`, `src/models.py` and `src/utils.py`. Keep the setup cell's `MODULE_SOURCES` snapshot synchronized when updating these files.
 
@@ -146,18 +146,18 @@ Assignment 2 will build upon this repository with improved modeling approaches, 
 - 2026-11-08: Evaluated the fixed Random Forest on 9 independent test videos (54,192 valid frames), achieving F1-score 0.4966 and average precision 0.4403.
 - 2026-11-08: Refactored reusable data processing and baseline model functions into src/data.py and src/models.py.
 - 2026-11-08: Integrated GitHub modules into Google Colab and successfully reproduced the original training, validation, and independent test results.
-
 - 2026-11-13: Added offline Kaggle execution and automatic Colab setup to the original Assignment 1 notebook.
-
 - 2026-11-13: Replaced the annotation-prior submission with supervised action models shared with Assignment 1 and added held-out behavior evaluation.
-
+- 2026-11-13: Successfully submitted Assignment 1 to Kaggle as a late submission, achieving a Public Score of 0.19871 and Private Score of 0.18551.
 ## Kaggle submission status
 
 The Assignment 1 notebook was successfully submitted to the **MABe Challenge – Social Action Recognition in Mice** as a late submission.
 
-| Submission             |Public Score |Private Score|        Status              |
 
-| Group19(2) – Version 2 | **0.19871** | **0.18551** | Succeeded (after deadline) |
+| Submission             | Public Score | Private Score | Status                     |
+|------------------------|-------------:|--------------:|----------------------------|
+| Group19(2) - Version 2 |      0.19871 |       0.18551 | Succeeded (after deadline) |
+
 
 The submitted notebook performs exploratory data analysis, trains baseline models, and generates `submission.csv` using the competition's required format.
 
